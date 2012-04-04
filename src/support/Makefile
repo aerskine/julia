@@ -4,16 +4,17 @@ include $(JULIAHOME)/Make.inc
 override CFLAGS += $(JCFLAGS)
 override CXXFLAGS += $(JCXXFLAGS)
 
-SRCS = hashing.c timefuncs.c dblprint.c ptrhash.c operators.c \
+SRCS = hashing.c timefuncs.c dblprint.c ptrhash.c operators.c socket.c \
 	utf8.c ios.c dirpath.c htable.c bitvector.c \
 	int2str.c dump.c libsupportinit.c arraylist.c
 
 OBJS = $(SRCS:%.c=%.o)
 DOBJS = $(SRCS:%.c=%.do)
 
-ifeq ($(USEEMCC), 0)
-SRCS += socket.c
-else
+ifeq ($(USEEMCC), 1)
+SRCS = hashing.c timefuncs.c dblprint.c ptrhash.c operators.c \
+	utf8.c ios.c dirpath.c htable.c bitvector.c \
+	int2str.c dump.c libsupportinit.c arraylist.c
 OBJS = $(SRCS:%.c=%.bc)
 DOBJS = $(SRCS:%.c=%.dbc)
 endif
