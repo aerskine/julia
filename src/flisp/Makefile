@@ -85,5 +85,7 @@ clean:
 	rm -f *.o *.bc
 	rm -f *.do *.dbc
 	rm -f *.a
-	rm -f $(EXENAME)*
-	rm -f $(EXENAME)-debug*
+	rm -f $(EXENAME)
+	rm -f $(EXENAME)-debug
+	rm -f $(EXENAME).js
+	rm -f $(EXENAME)-debug.js
