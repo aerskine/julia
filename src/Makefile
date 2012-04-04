@@ -54,8 +54,17 @@ builtins.o builtins.do: table.c
 support/libsupport.a: support/*.h support/*.c
 	$(MAKE) -C support
 
+support/libsupport-js.a: support/*.h support/*.c
+	$(MAKE) -C support libsupport-js.a
+
 flisp/libflisp.a: flisp/*.h flisp/*.c support/libsupport.a
 	$(MAKE) -C flisp
+
+flisp/libflisp-js.a: flisp/*.h flisp/*.c support/libsupport-js.a
+	$(MAKE) -C flisp flisp-js libflisp-js.a
+
+flisp/libflisp-js-debug.a: flisp/*.h flisp/*.c support/libsupport-js.a
+	$(MAKE) -C flisp flisp-debug.js libflisp-js-debug.a
 
 ../libjulia-debug.$(SHLIB_EXT): $(DOBJS) flisp/libflisp.a support/libsupport.a
 	$(QUIET_LINK) $(CXX) $(DEBUGFLAGS) $(DOBJS) -shared -o ../libjulia-debug.$(SHLIB_EXT) $(LIBS)
@@ -70,6 +79,10 @@ libjulia-release.a: $(OBJS) flisp/libflisp.a support/libsupport.a
 	rm -f $@
 	$(QUIET_LINK) ar -rcs $@ $(OBJS)
 libjulia-release: libjulia-release.a ../libjulia-release.$(SHLIB_EXT)
+
+libjulia-js-debug.a: flisp/libflisp-js-debug.a
+
+libjulia-js-debug: libjulia-js-debug.a
 
 clean:
 	rm -f libjulia*.$(SHLIB_EXT)

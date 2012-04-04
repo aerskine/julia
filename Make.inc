@@ -45,6 +45,18 @@ DEBUGFLAGS = -g -DDEBUG
 SHIPFLAGS = -O3 -DNDEBUG
 endif
 
+ifeq ($(USEEMCC),1)
+CC = emcc
+CXX = em++
+RANLIB=emranlib
+AR=emar
+NODEJS=node
+JCFLAGS = -std=gnu99 -pipe -fPIC -fno-strict-aliasing
+JCXXFLAGS = -pipe -fPIC -fno-rtti
+DEBUGFLAGS = -g -DDEBUG
+SHIPFLAGS = -O3 -DNDEBUG
+endif
+
 # If OpenBLAS doesn't build, find your architechure at the following URL and enter it below
 # https://github.com/xianyi/OpenBLAS/blob/master/GotoBLAS_01Readme.txt
 TARGET_OPENBLAS_ARCH=

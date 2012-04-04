@@ -1,7 +1,7 @@
 #ifndef IEEE754_H
 #define IEEE754_H
 
-#ifdef __linux
+#if (defined __linux && !defined EMSCRIPTEN)
 
 #include <ieee754.h>
 

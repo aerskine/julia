@@ -29,12 +29,16 @@
 #endif
 
 #ifdef __linux
+#ifndef EMSCRIPTEN
 #include <features.h>
 #include <endian.h>
 #define LITTLE_ENDIAN  __LITTLE_ENDIAN
 #define BIG_ENDIAN     __BIG_ENDIAN
 #define PDP_ENDIAN     __PDP_ENDIAN
 #define BYTE_ORDER     __BYTE_ORDER
+#else
+#include <endian.h>
+#endif//ndef EMSCRIPTEN
 #endif
 
 #ifdef __APPLE__
