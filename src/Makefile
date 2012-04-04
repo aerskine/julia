@@ -57,13 +57,16 @@ support/libsupport.a: support/*.h support/*.c
 support/libsupport-js.a: support/*.h support/*.c
 	$(MAKE) -C support libsupport-js.a
 
+support/libsupport-js-debug.a: support/*.h support/*.c
+	$(MAKE) -C support libsupport-js-debug.a
+
 flisp/libflisp.a: flisp/*.h flisp/*.c support/libsupport.a
 	$(MAKE) -C flisp
 
 flisp/libflisp-js.a: flisp/*.h flisp/*.c support/libsupport-js.a
 	$(MAKE) -C flisp flisp-js libflisp-js.a
 
-flisp/libflisp-js-debug.a: flisp/*.h flisp/*.c support/libsupport-js.a
+flisp/libflisp-js-debug.a: flisp/*.h flisp/*.c support/libsupport-js-debug.a
 	$(MAKE) -C flisp flisp-debug.js libflisp-js-debug.a
 
 ../libjulia-debug.$(SHLIB_EXT): $(DOBJS) flisp/libflisp.a support/libsupport.a

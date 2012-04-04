@@ -49,6 +49,9 @@ flmain.do flmain.dbc: flmain.c flisp.h
 $(LLT): $(LLTDIR)/*.h $(LLTDIR)/*.c
 	cd $(LLTDIR) && make $(LLT)
 
+libsupport-js-debug.a: $(LLTDIR)/*.h $(LLTDIR)/*.c
+	cd $(LLTDIR) && make libsupport-js-debug.a
+
 $(LIBTARGET)-debug.a: $(DOBJS)
 	rm -rf $@
 	$(QUIET_LINK) ar -rcs $@ $(DOBJS)
@@ -70,7 +73,7 @@ $(LIBTARGET)-js.a: $(OBJS)
 $(EXENAME)-debug: $(DOBJS) $(LIBFILES) $(LIBTARGET)-debug.a flmain.do
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.do -o $(EXENAME)-debug $(LIBS) $(LIBTARGET).a $(OSLIBS)
 	./$(EXENAME)-debug unittest.lsp
-$(EXENAME)-debug.js: $(DOBJS) $(LIBFILES) $(LIBTARGET)-js-debug.a flmain.dbc
+$(EXENAME)-debug.js: $(DOBJS) libsupport-js-debug.a $(LIBTARGET)-js-debug.a flmain.dbc
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.dbc -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-js.a $(OSLIBS)
 	$(NODEJS) ./$(EXENAME)-debug.js unittest.lsp
 

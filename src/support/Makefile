@@ -43,7 +43,11 @@ libsupport.a: $(XOBJS)
 	rm -rf $@
 	$(QUIET_LINK) ar -rcs $@ $^
 
-libsupport-js.a: $(XOBJS)
+libsupport-js.a: $(OBJS)
+	rm -rf $@
+	$(QUIET_LINK) $(AR) rcs $@ $^
+
+libsupport-js-debug.a: $(DOBJS)
 	rm -rf $@
 	$(QUIET_LINK) $(AR) rcs $@ $^
 
@@ -51,6 +55,7 @@ clean:
 	rm -f *.o
 	rm -f *.do
 	rm -f *.a
+	rm -f *.bc
+	rm -f *.dbc
 	rm -f *~ *#
 	rm -f core*
-	rm -f libsupport.a
