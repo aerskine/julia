@@ -16,7 +16,7 @@ SRCS = hashing.c timefuncs.c dblprint.c ptrhash.c operators.c \
 	utf8.c ios.c dirpath.c htable.c bitvector.c \
 	int2str.c dump.c libsupportinit.c arraylist.c
 OBJS = $(SRCS:%.c=%-emcc.o)
-DOBJS = $(SRCS:%.c=%-emcc.do)
+DOBJS = $(SRCS:%.c=%-emcc-debug.o)
 endif
 
 ifneq ($(MAKECMDGOALS),debug)
@@ -34,7 +34,7 @@ default: release
 
 %.o %-emcc.o: %.c
 	$(QUIET_CC) $(CC) $(SHIPFLAGS) -c $< -o $@
-%.do %-emcc.do: %.c
+%.do %-emcc-debug.o: %.c
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) -c $< -o $@
 
 release debug: libsupport.a
@@ -55,7 +55,5 @@ clean:
 	rm -f *.o
 	rm -f *.do
 	rm -f *.a
-	rm -f *.bc
-	rm -f *.dbc
 	rm -f *~ *#
 	rm -f core*

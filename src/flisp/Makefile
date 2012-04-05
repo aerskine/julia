@@ -17,7 +17,7 @@ LLT = $(LLTDIR)/libsupport.a
 
 ifeq ($(USEEMCC), 1)
 OBJS = $(SRCS:%.c=%-emcc.o)
-DOBJS = $(SRCS:%.c=%-emcc.do)
+DOBJS = $(SRCS:%.c=%-emcc-debug.o)
 LLT = $(LLTDIR)/libsupport-emcc.a
 endif
 
@@ -37,13 +37,13 @@ debug: $(EXENAME)-debug
 
 %.o %-emcc.o: %.c
 	$(QUIET_CC) $(CC) $(SHIPFLAGS) -c $< -o $@
-%.do %-emcc.do: %.c
+%.do %-emcc-debug.o: %.c
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) -c $< -o $@
 
 flisp.o flisp-emcc.o:   flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
-flisp.do flisp-emcc.do:  flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
+flisp.do flisp-emcc-debug.o:  flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
 flmain.o flmain-emcc.o:  flmain.c flisp.h
-flmain.do flmain-emcc.do: flmain.c flisp.h
+flmain.do flmain-emcc-debug.o: flmain.c flisp.h
 
 $(LLT): $(LLTDIR)/*.h $(LLTDIR)/*.c
 	cd $(LLTDIR) && make $(LLT)
@@ -71,13 +71,13 @@ $(LIBTARGET)-emcc.a: $(OBJS)
 $(EXENAME)-debug: $(DOBJS) $(LIBFILES) $(LIBTARGET)-debug.a flmain.do
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.do -o $(EXENAME)-debug $(LIBS) $(LIBTARGET).a $(OSLIBS)
 	./$(EXENAME)-debug unittest.lsp
-$(EXENAME)-debug.js: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc.do
-	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.bc $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
-	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+$(EXENAME)-debug.js: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc-debug.o
+	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
 	$(NODEJS) ./$(EXENAME)-debug.js unittest.lsp
-$(EXENAME)-debug.html: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc.do
-	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.bc $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
-	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+$(EXENAME)-debug.html: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc-debug.o
+	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
 
 
 $(EXENAME): $(OBJS) $(LIBFILES) $(LIBTARGET).a flmain.o
