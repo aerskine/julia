@@ -15,8 +15,8 @@ ifeq ($(USEEMCC), 1)
 SRCS = hashing.c timefuncs.c dblprint.c ptrhash.c operators.c \
 	utf8.c ios.c dirpath.c htable.c bitvector.c \
 	int2str.c dump.c libsupportinit.c arraylist.c
-OBJS = $(SRCS:%.c=%.bc)
-DOBJS = $(SRCS:%.c=%.dbc)
+OBJS = $(SRCS:%.c=%-emcc.o)
+DOBJS = $(SRCS:%.c=%-emcc.do)
 endif
 
 ifneq ($(MAKECMDGOALS),debug)
@@ -32,9 +32,9 @@ SHIPFLAGS += $(FLAGS)
 
 default: release
 
-%.o %.bc: %.c
+%.o %-emcc.o: %.c
 	$(QUIET_CC) $(CC) $(SHIPFLAGS) -c $< -o $@
-%.do %.dbc: %.c
+%.do %-emcc.do: %.c
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) -c $< -o $@
 
 release debug: libsupport.a
@@ -43,11 +43,11 @@ libsupport.a: $(XOBJS)
 	rm -rf $@
 	$(QUIET_LINK) ar -rcs $@ $^
 
-libsupport-js.a: $(OBJS)
+libsupport-emcc.a: $(OBJS)
 	rm -rf $@
 	$(QUIET_LINK) $(AR) rcs $@ $^
 
-libsupport-js-debug.a: $(DOBJS)
+libsupport-emcc-debug.a: $(DOBJS)
 	rm -rf $@
 	$(QUIET_LINK) $(AR) rcs $@ $^
 

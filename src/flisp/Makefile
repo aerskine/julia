@@ -16,10 +16,9 @@ LLTDIR = ../support
 LLT = $(LLTDIR)/libsupport.a
 
 ifeq ($(USEEMCC), 1)
-OBJS = $(SRCS:%.c=%.bc)
-DOBJS = $(SRCS:%.c=%.dbc)
-LLT = $(LLTDIR)/libsupport-js.a
-LIBTARGET = lib$(NAME)-js
+OBJS = $(SRCS:%.c=%-emcc.o)
+DOBJS = $(SRCS:%.c=%-emcc.do)
+LLT = $(LLTDIR)/libsupport-emcc.a
 endif
 
 FLAGS = -Wall -Wno-strict-aliasing -I$(LLTDIR) $(CFLAGS) \
@@ -36,21 +35,21 @@ release: $(EXENAME)
 
 debug: $(EXENAME)-debug
 
-%.o %.bc: %.c
+%.o %-emcc.o: %.c
 	$(QUIET_CC) $(CC) $(SHIPFLAGS) -c $< -o $@
-%.do %.dbc: %.c
+%.do %-emcc.do: %.c
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) -c $< -o $@
 
-flisp.o flisp.bc:   flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
-flisp.do flisp.dbc:  flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
-flmain.o flmain.bc:  flmain.c flisp.h
-flmain.do flmain.dbc: flmain.c flisp.h
+flisp.o flisp-emcc.o:   flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
+flisp.do flisp-emcc.do:  flisp.c cvalues.c types.c flisp.h print.c read.c equal.c
+flmain.o flmain-emcc.o:  flmain.c flisp.h
+flmain.do flmain-emcc.do: flmain.c flisp.h
 
 $(LLT): $(LLTDIR)/*.h $(LLTDIR)/*.c
 	cd $(LLTDIR) && make $(LLT)
 
-libsupport-js-debug.a: $(LLTDIR)/*.h $(LLTDIR)/*.c
-	cd $(LLTDIR) && make libsupport-js-debug.a
+libsupport-emcc-debug.a: $(LLTDIR)/*.h $(LLTDIR)/*.c
+	cd $(LLTDIR) && make libsupport-emcc-debug.a
 
 $(LIBTARGET)-debug.a: $(DOBJS)
 	rm -rf $@
@@ -61,27 +60,31 @@ $(LIBTARGET).a: $(OBJS)
 	rm -rf $@
 	$(QUIET_LINK) ar -rcs $@ $(OBJS)
 
-$(LIBTARGET)-js-debug.a: $(DOBJS)
+$(LIBTARGET)-emcc-debug.a: $(DOBJS)
 	rm -rf $@
 	$(QUIET_LINK) $(AR) rcs $@ $(DOBJS)
-	ln -sf $@ $(LIBTARGET)-js.a
 
-$(LIBTARGET)-js.a: $(OBJS)
+$(LIBTARGET)-emcc.a: $(OBJS)
 	rm -rf $@
 	$(QUIET_LINK) $(AR) rcs $@ $(OBJS)
 
 $(EXENAME)-debug: $(DOBJS) $(LIBFILES) $(LIBTARGET)-debug.a flmain.do
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.do -o $(EXENAME)-debug $(LIBS) $(LIBTARGET).a $(OSLIBS)
 	./$(EXENAME)-debug unittest.lsp
-$(EXENAME)-debug.js: $(DOBJS) libsupport-js-debug.a $(LIBTARGET)-js-debug.a flmain.dbc
-	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.dbc -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-js.a $(OSLIBS)
+$(EXENAME)-debug.js: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc.do
+	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.bc $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
 	$(NODEJS) ./$(EXENAME)-debug.js unittest.lsp
+$(EXENAME)-debug.html: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc.do
+	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.bc $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc.do -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+
 
 $(EXENAME): $(OBJS) $(LIBFILES) $(LIBTARGET).a flmain.o
 	$(QUIET_CC) $(CC) $(SHIPFLAGS) $(OBJS) flmain.o -o $(EXENAME) $(LIBS) $(LIBTARGET).a $(OSLIBS)
 	./$(EXENAME) unittest.lsp
-$(EXENAME).js: $(OBJS) $(LIBFILES) $(LIBTARGET)-js.a flmain.bc
-	$(QUIET_CC) $(CC) $(SHIPFLAGS) $(OBJS) flmain.bc -o $(EXENAME).js $(LIBS) $(LIBTARGET)-js.a $(OSLIBS)
+$(EXENAME).js: $(OBJS) $(LIBFILES) $(LIBTARGET)-emcc.a flmain.bc
+	$(QUIET_CC) $(CC) $(SHIPFLAGS) $(OBJS) flmain.bc -o $(EXENAME).js $(LIBS) $(LIBTARGET)-emcc.a $(OSLIBS)
 	$(NODEJS) ./$(EXENAME).js unittest.lsp
 
 clean:

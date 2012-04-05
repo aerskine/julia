@@ -54,20 +54,20 @@ builtins.o builtins.do: table.c
 support/libsupport.a: support/*.h support/*.c
 	$(MAKE) -C support
 
-support/libsupport-js.a: support/*.h support/*.c
-	$(MAKE) -C support libsupport-js.a
+support/libsupport-emcc.a: support/*.h support/*.c
+	$(MAKE) -C support libsupport-emcc.a
 
-support/libsupport-js-debug.a: support/*.h support/*.c
-	$(MAKE) -C support libsupport-js-debug.a
+support/libsupport-emcc-debug.a: support/*.h support/*.c
+	$(MAKE) -C support libsupport-emcc-debug.a
 
 flisp/libflisp.a: flisp/*.h flisp/*.c support/libsupport.a
 	$(MAKE) -C flisp
 
-flisp/libflisp-js.a: flisp/*.h flisp/*.c support/libsupport-js.a
-	$(MAKE) -C flisp flisp-js libflisp-js.a
+flisp/libflisp-emcc.a: flisp/*.h flisp/*.c support/libsupport-emcc.a
+	$(MAKE) -C flisp flisp.js flisp.html libflisp-emcc.a
 
-flisp/libflisp-js-debug.a: flisp/*.h flisp/*.c support/libsupport-js-debug.a
-	$(MAKE) -C flisp flisp-debug.js libflisp-js-debug.a
+flisp/libflisp-emcc-debug.a: flisp/*.h flisp/*.c support/libsupport-emcc-debug.a
+	$(MAKE) -C flisp flisp-debug.js flisp-debug.html libflisp-emcc-debug.a
 
 ../libjulia-debug.$(SHLIB_EXT): $(DOBJS) flisp/libflisp.a support/libsupport.a
 	$(QUIET_LINK) $(CXX) $(DEBUGFLAGS) $(DOBJS) -shared -o ../libjulia-debug.$(SHLIB_EXT) $(LIBS)
@@ -83,9 +83,9 @@ libjulia-release.a: $(OBJS) flisp/libflisp.a support/libsupport.a
 	$(QUIET_LINK) ar -rcs $@ $(OBJS)
 libjulia-release: libjulia-release.a ../libjulia-release.$(SHLIB_EXT)
 
-libjulia-js-debug.a: flisp/libflisp-js-debug.a
+libjulia-emcc-debug.a: flisp/libflisp-emcc-debug.a
 
-libjulia-js-debug: libjulia-js-debug.a
+libjulia-emcc-debug: libjulia-emcc-debug.a
 
 clean:
 	rm -f libjulia*.$(SHLIB_EXT)

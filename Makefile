@@ -15,7 +15,7 @@ julia-debug julia-release:
 	@$(MAKE) $(jPARALLEL_BUILD_JOBS) -sC ui $@
 	@ln -f $@-$(DEFAULT_REPL) julia
 
-julia-js-debug:
+julia-emcc-debug:
 	@$(MAKE) $(jPARALLEL_BUILD_JOBS) USE_COPY_STACKS=0 USEEMCC=1 -sC src lib$@
 
 sys0.ji: src/boot.jl src/dump.c base/stage0.jl
