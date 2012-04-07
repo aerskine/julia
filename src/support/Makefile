@@ -49,6 +49,7 @@ libsupport-emcc.a: $(OBJS)
 
 libsupport-emcc-debug.a: $(DOBJS)
 	rm -rf $@
+	@echo $(AR) rcs $@ $^
 	$(QUIET_LINK) $(AR) rcs $@ $^
 
 clean:

@@ -73,7 +73,8 @@ distclean: cleanall
 	rm -fr dist
 
 .PHONY: default debug release julia-debug julia-release \
-	test testall test-* sloccount clean cleanall
+	julia-emcc-debug test testall test-* \
+	sloccount clean cleanall
 
 test: release
 	@$(MAKE) -sC test default

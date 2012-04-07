@@ -62,6 +62,7 @@ $(LIBTARGET).a: $(OBJS)
 
 $(LIBTARGET)-emcc-debug.a: $(DOBJS)
 	rm -rf $@
+	@echo $(AR) rcs $@ $(DOBJS)
 	$(QUIET_LINK) $(AR) rcs $@ $(DOBJS)
 
 $(LIBTARGET)-emcc.a: $(OBJS)
@@ -72,12 +73,12 @@ $(EXENAME)-debug: $(DOBJS) $(LIBFILES) $(LIBTARGET)-debug.a flmain.do
 	$(QUIET_CC) $(CC) $(DEBUGFLAGS) $(DOBJS) flmain.do -o $(EXENAME)-debug $(LIBS) $(LIBTARGET).a $(OSLIBS)
 	./$(EXENAME)-debug unittest.lsp
 $(EXENAME)-debug.js: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc-debug.o
-	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
-	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.js $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
-	$(NODEJS) ./$(EXENAME)-debug.js unittest.lsp
+	@echo $(CC) $(LLTDIR)/*-emcc-debug.o *-emcc-debug.o -o $(EXENAME)-debug.js
+	$(CC) $(LLTDIR)/*-emcc-debug.o *-emcc-debug.o -o $(EXENAME)-debug.js
+	# $(NODEJS) ./$(EXENAME)-debug.js unittest.lsp
 $(EXENAME)-debug.html: $(DOBJS) libsupport-emcc-debug.a $(LIBTARGET)-emcc-debug.a flmain-emcc-debug.o
-	@echo $(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
-	$(CC) $(DEBUGFLAGS) $(DOBJS) flmain-emcc-debug.o -o $(EXENAME)-debug.html $(LIBS) $(LIBTARGET)-emcc-debug.a $(OSLIBS)
+	@echo $(CC) $(LLTDIR)/*-emcc-debug.o *-emcc-debug.o -o $(EXENAME)-debug.html
+	$(CC) $(LLTDIR)/*-emcc-debug.o *-emcc-debug.o -o $(EXENAME)-debug.html
 
 
 $(EXENAME): $(OBJS) $(LIBFILES) $(LIBTARGET).a flmain.o
